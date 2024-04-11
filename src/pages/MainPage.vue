@@ -3,8 +3,14 @@ import AuthorizationForm from '../components/AuthorizationForm.vue';
 </script>
 
 <template>
-  <div>Форма авторизации:</div>
-  <AuthorizationForm />
+  <div class="main">
+    <AuthorizationForm />
+  </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.main {
+  background: white;
+  border-radius: 20px;
+}
+</style>
