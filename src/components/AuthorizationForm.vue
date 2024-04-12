@@ -5,23 +5,17 @@ const phoneNumber = ref<number>();
 const password = ref<number>();
 const remember = ref<boolean>(false);
 
-// чисто чтобы не забыть самому
-const succesNumber = ref<number>(79999999999);
-const succesPassword = ref<number>(1234567890);
-
-const comeIn = async () => {
-  console.log(phoneNumber.value.toString());
-  console.log(password.value.toString());
-  const formData = new FormData();
-  formData.set('phone', phoneNumber.value.toString());
-  formData.set('password', password.value.toString());
-  console.log(Array.from(formData));
+const comeInHandler = async () => {
+  const data = {
+    phone: phoneNumber.value,
+    password: password.value,
+  };
 
   const response = await fetch(
     'https://backend-front-test.dev.echo-company.ru/api/auth/login',
     {
       method: 'POST',
-      body: formData,
+      body: JSON.stringify(data),
     },
   );
 
@@ -83,7 +77,7 @@ const comeIn = async () => {
               <a href="#">Забыли пароль?</a>
             </div>
           </div>
-          <button type="button" class="btn" @click.prevent="comeIn">
+          <button type="button" class="btn" @click.prevent="comeInHandler">
             Войти
           </button>
         </form>
