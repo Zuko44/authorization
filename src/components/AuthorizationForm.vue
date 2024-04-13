@@ -1,27 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { comeInHandler } from '../api/api';
 
 const phoneNumber = ref<number>();
 const password = ref<number>();
 const remember = ref<boolean>(false);
 
-const comeInHandler = async () => {
-  const data = {
-    phone: phoneNumber.value,
-    password: password.value,
-  };
-
-  const response = await fetch(
-    'https://backend-front-test.dev.echo-company.ru/api/auth/login',
-    {
-      method: 'POST',
-      body: JSON.stringify(data),
-    },
-  );
-
-  const result = await response.json();
-  console.log(result);
-};
+comeInHandler(phoneNumber.value, password.value);
 </script>
 
 <template>
@@ -77,7 +62,12 @@ const comeInHandler = async () => {
               <a href="#">Забыли пароль?</a>
             </div>
           </div>
-          <button type="button" class="btn" @click.prevent="comeInHandler">
+          <button
+            type="button"
+            class="btn"
+            @click.prevent:
+            Promise="comeInHandler"
+          >
             Войти
           </button>
         </form>
