@@ -1,26 +1,48 @@
 <script setup lang="ts">
+import router from '../router';
 import { ref } from 'vue';
 
+const userName = ref<string>('');
 const phoneNumber = ref<number>();
-const password = ref<number>();
-const remember = ref<boolean>(false);
+const password = ref<string>('');
+const avatar = ref<HTMLInputElement | null>(null);
+const files = ref();
 
-const comeInHandler = async () => {
-  const data = {
-    phone: phoneNumber.value,
-    password: password.value,
-  };
+const handleFileChange = () => {
+  files.value = avatar.value?.files;
+  doSomething();
+};
 
+const doSomething = () => {
+  const file = files.value[0];
+  console.log(file);
+};
+
+const registrationHandler = async () => {
+  // const data = {
+  //   phoneNumber: phoneNumber.value,
+  //   password: password.value,
+  // };
+  const formData = new FormData();
+  formData.set('name', userName.value.toString());
+  formData.set('phone', phoneNumber.value.toString());
+  formData.set('password', password.value.toString());
+  formData.set('avatar', files.value);
+
+  // const response = await fetch('http://localhost/test/login.php', {
   const response = await fetch(
-    'https://backend-front-test.dev.echo-company.ru/api/auth/login',
+    'https://backend-front-test.dev.echo-company.ru/api/user/registration',
     {
       method: 'POST',
-      body: JSON.stringify(data),
+      body: formData,
     },
   );
 
   const result = await response.json();
   console.log(result);
+  if (result.success === true) {
+    router.push({ name: 'registr' });
+  }
 };
 </script>
 
@@ -43,44 +65,51 @@ const comeInHandler = async () => {
     <div class="rightPart">
       <div class="formWrapper">
         <h1>Добро пожаловать</h1>
-        <div class="login">войти по номеру телефона</div>
         <form action="" method="POST">
+          <fieldset>
+            <legend>Имя</legend>
+            <input
+              v-model="userName"
+              name="userName"
+              type="text"
+              class="phoneNumber"
+            />
+          </fieldset>
           <fieldset>
             <legend>Номер телефона</legend>
             <input
               v-model="phoneNumber"
               name="phoneNumber"
               type="tel"
-              class="phoneNumber"
+              class="password"
             />
           </fieldset>
           <fieldset>
             <legend>Пароль</legend>
             <input
               v-model="password"
-              name="phoneNumber"
+              name="password"
               type="password"
               class="password"
             />
           </fieldset>
-          <div class="remember">
-            <div>
-              <label for="remember">Запомнить меня</label>
-              <input
-                type="checkbox"
-                class="remember"
-                v-model="remember"
-                :checked="remember"
-              />
-            </div>
-            <div>
-              <a href="#">Забыли пароль?</a>
-            </div>
-            <div>
-              <RouterLink to="/registr">Регистрация</RouterLink>
-            </div>
+          <fieldset>
+            <legend>Аватар</legend>
+            <input
+              @click="handleFileChange"
+              name="file"
+              type="file"
+              class="password"
+            />
+          </fieldset>
+          <div class="auth">
+            <RouterLink to="/">Авторизация</RouterLink>
           </div>
-          <button type="button" class="btn" @click.prevent="comeInHandler">
+          <button
+            type="button"
+            class="btn"
+            @click.prevent="registrationHandler"
+          >
             Войти
           </button>
         </form>
@@ -98,6 +127,7 @@ const comeInHandler = async () => {
   flex-direction: row;
   border-radius: 20px;
   font-family: 'Cabinet Grotesk Regular';
+  background: white;
 }
 
 img {
@@ -215,28 +245,6 @@ legend {
   text-align: left;
 }
 
-.remember a {
-  color: RGB(128, 128, 128);
-}
-
-.remember {
-  margin-top: 10px;
-  color: RGB(128, 128, 128);
-}
-
-.remember div {
-  margin-left: 42%;
-}
-
-.remember a {
-  display: inline-block;
-}
-
-.remember input {
-  margin-left: 5px;
-  display: inline;
-}
-
 .btn {
   width: 125px;
   height: 48px;
@@ -246,5 +254,13 @@ legend {
   background-color: RGB(0, 158, 226);
   border: none;
   border-radius: 7px;
+}
+
+.auth a {
+  color: RGB(128, 128, 128);
+}
+.auth {
+  margin: 10px;
+  color: RGB(128, 128, 128);
 }
 </style>
