@@ -16,8 +16,10 @@ const comeIn = () => {
       console.log(result.msg);
       msg.value = result.msg;
       success.value = result.success;
-      phoneNumber.value = null;
-      password.value = '';
+      setTimeout(() => {
+        phoneNumber.value = null;
+        password.value = '';
+      }, 1000);
     },
   );
 };
