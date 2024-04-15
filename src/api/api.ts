@@ -5,7 +5,7 @@ export const comeInHandler = async (
 ) => {
   const formData = new FormData();
   formData.set('phoneNumber', value.toString());
-  formData.set('password', value2.toString());
+  formData.set('password', value2);
   formData.set('rememberMe', value3.toString());
 
   const response = await fetch('http://localhost/test/api/auth/login.php', {
