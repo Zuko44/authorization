@@ -1,48 +1,45 @@
 <script setup lang="ts">
+import { registrationHandler } from '../api/api';
 import router from '../router';
 import { ref } from 'vue';
 
-const userName = ref<string>('');
+const userName = ref<string>();
 const phoneNumber = ref<number>();
-const password = ref<string>('');
-const avatar = ref<HTMLInputElement | null>(null);
-const files = ref();
+const password = ref<string>();
+const file = ref<File | null>();
+const msg = ref<string>();
+const success = ref<boolean>();
 
-const handleFileChange = () => {
-  files.value = avatar.value?.files;
-  doSomething();
-};
-
-const doSomething = () => {
-  const file = files.value[0];
-  console.log(file);
-};
-
-const registrationHandler = async () => {
-  // const data = {
-  //   phoneNumber: phoneNumber.value,
-  //   password: password.value,
-  // };
-  const formData = new FormData();
-  formData.set('name', userName.value.toString());
-  formData.set('phone', phoneNumber.value.toString());
-  formData.set('password', password.value.toString());
-  formData.set('avatar', files.value);
-
-  // const response = await fetch('http://localhost/test/login.php', {
-  const response = await fetch(
-    'https://backend-front-test.dev.echo-company.ru/api/user/registration',
-    {
-      method: 'POST',
-      body: formData,
-    },
-  );
-
-  const result = await response.json();
-  console.log(result);
-  if (result.success === true) {
-    router.push({ name: 'registr' });
+const handleFileChange = (e: any) => {
+  if (e.target && e.target.files) {
+    file.value = e.target.files[0];
   }
+};
+
+const registration = () => {
+  registrationHandler(
+    userName.value,
+    phoneNumber.value,
+    password.value,
+    file.value,
+  ).then((result) => {
+    console.log(result);
+    console.log(result.success);
+    console.log(result.msg);
+
+    msg.value = result.msg;
+    success.value = result.success;
+
+    userName.value = '';
+    phoneNumber.value = null;
+    password.value = '';
+
+    setTimeout(() => {
+      if (result.success === true) {
+        router.push({ name: 'home' });
+      }
+    }, 1500);
+  });
 };
 </script>
 
@@ -65,6 +62,9 @@ const registrationHandler = async () => {
     <div class="rightPart">
       <div class="formWrapper">
         <h1>Добро пожаловать</h1>
+        <div :class="{ error: success === false, success: success === true }">
+          {{ msg }}
+        </div>
         <form action="" method="POST">
           <fieldset>
             <legend>Имя</legend>
@@ -96,7 +96,7 @@ const registrationHandler = async () => {
           <fieldset>
             <legend>Аватар</legend>
             <input
-              @click="handleFileChange"
+              @change="handleFileChange"
               name="file"
               type="file"
               class="password"
@@ -105,12 +105,8 @@ const registrationHandler = async () => {
           <div class="auth">
             <RouterLink to="/">Авторизация</RouterLink>
           </div>
-          <button
-            type="button"
-            class="btn"
-            @click.prevent="registrationHandler"
-          >
-            Войти
+          <button type="button" class="btn" @click.prevent="registration">
+            Регистрация
           </button>
         </form>
       </div>
@@ -259,8 +255,16 @@ legend {
 .auth a {
   color: RGB(128, 128, 128);
 }
+
 .auth {
   margin: 10px;
   color: RGB(128, 128, 128);
+}
+
+.error {
+  color: red;
+}
+.success {
+  color: green;
 }
 </style>
