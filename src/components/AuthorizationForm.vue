@@ -3,10 +3,24 @@ import { ref } from 'vue';
 import { comeInHandler } from '../api/api';
 
 const phoneNumber = ref<number>();
-const password = ref<number>();
+const password = ref<string>();
 const remember = ref<boolean>(false);
+const msg = ref<string>();
+const success = ref<boolean>();
 
-comeInHandler(phoneNumber.value, password.value);
+const comeIn = () => {
+  comeInHandler(phoneNumber.value, password.value, remember.value).then(
+    (result) => {
+      console.log(result);
+      console.log(result.success);
+      console.log(result.msg);
+      msg.value = result.msg;
+      success.value = result.success;
+      phoneNumber.value = null;
+      password.value = '';
+    },
+  );
+};
 </script>
 
 <template>
@@ -29,6 +43,9 @@ comeInHandler(phoneNumber.value, password.value);
       <div class="formWrapper">
         <h1>Добро пожаловать</h1>
         <div class="login">войти по номеру телефона</div>
+        <div :class="{ error: success === false, success: success === true }">
+          {{ msg }}
+        </div>
         <form action="" method="POST">
           <fieldset>
             <legend>Номер телефона</legend>
@@ -62,12 +79,7 @@ comeInHandler(phoneNumber.value, password.value);
               <a href="#">Забыли пароль?</a>
             </div>
           </div>
-          <button
-            type="button"
-            class="btn"
-            @click.prevent:
-            Promise="comeInHandler"
-          >
+          <button type="button" class="btn" @click.prevent="comeIn">
             Войти
           </button>
         </form>
@@ -233,5 +245,13 @@ legend {
   background-color: RGB(0, 158, 226);
   border: none;
   border-radius: 7px;
+}
+
+.error {
+  color: red;
+}
+
+.success {
+  color: green;
 }
 </style>
