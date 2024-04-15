@@ -1,49 +1,32 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { sendPhoneHandler, sendSmsHandler } from '../api/api';
 import router from '../router';
 
 const phoneNumber = ref<number>();
 const password = ref<number>();
 const remember = ref<boolean>(false);
+const msg = ref<string>();
+const success = ref<boolean>();
 
-const sendPhoneHandler = async () => {
-  const data = {
-    phone: phoneNumber.value,
-  };
+const sendPhone = () => {
+  sendPhoneHandler(phoneNumber.value).then((result) => {
+    msg.value = result.msg;
 
-  const response = await fetch(
-    'https://backend-front-test.dev.echo-company.ru/api/user/forgot-start',
-    {
-      method: 'POST',
-      body: JSON.stringify(data),
-    },
-  );
-
-  const result = await response.json();
-  console.log(result);
-  if (result.success === true) {
-    remember.value = true;
-  }
+    if (result.success === true) {
+      remember.value = true;
+    }
+  });
 };
 
-const sendSmsHandler = async () => {
-  const data = {
-    phone: password.value,
-  };
+const sendSms = () => {
+  sendSmsHandler(password.value).then((result) => {
+    msg.value = result.msg;
 
-  const response = await fetch(
-    'https://backend-front-test.dev.echo-company.ru/api/user/forgot-end',
-    {
-      method: 'POST',
-      body: JSON.stringify(data),
-    },
-  );
-
-  const result = await response.json();
-  console.log(result);
-  if (result.success === true) {
-    router.push({ name: '/' });
-  }
+    if (result.success === true) {
+      router.push({ name: 'home' });
+    }
+  });
 };
 </script>
 
@@ -66,6 +49,9 @@ const sendSmsHandler = async () => {
     <div class="rightPart">
       <div class="formWrapper">
         <h1>Добро пожаловать</h1>
+        <div :class="{ error: success === false, success: success === true }">
+          {{ msg }}
+        </div>
         <form v-if="!remember" action="" method="POST">
           <fieldset>
             <legend>Номер телефона</legend>
@@ -76,7 +62,7 @@ const sendSmsHandler = async () => {
               class="phoneNumber"
             />
           </fieldset>
-          <button type="button" class="btn" @click.prevent="sendPhoneHandler">
+          <button type="button" class="btn" @click.prevent="sendPhone">
             Отправить
           </button>
         </form>
@@ -90,7 +76,7 @@ const sendSmsHandler = async () => {
               class="password"
             />
           </fieldset>
-          <button type="button" class="btn" @click.prevent="sendSmsHandler">
+          <button type="button" class="btn" @click.prevent="sendSms">
             Отправить
           </button>
         </form>
@@ -258,5 +244,12 @@ legend {
   border: none;
   border-radius: 7px;
   margin-top: 15px;
+}
+
+.error {
+  color: red;
+}
+.success {
+  color: green;
 }
 </style>

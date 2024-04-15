@@ -74,7 +74,7 @@ const comeInHandler = async () => {
               />
             </div>
             <div>
-              <a href="#">Забыли пароль?</a>
+              <RouterLink to="/recovery">Забыли пароль?</RouterLink>
             </div>
           </div>
           <button type="button" class="btn" @click.prevent="comeInHandler">
