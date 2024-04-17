@@ -16,6 +16,12 @@ const handleFileChange = (e: any) => {
   }
 };
 
+const clearInputs = () => {
+  userName.value = '';
+  phoneNumber.value = null;
+  password.value = '';
+};
+
 const registrationHandler = () => {
   registration(
     userName.value,
@@ -30,9 +36,7 @@ const registrationHandler = () => {
     msg.value = result.msg;
     success.value = result.success;
 
-    userName.value = '';
-    phoneNumber.value = null;
-    password.value = '';
+    clearInputs();
 
     setTimeout(() => {
       if (result.success === true) {
