@@ -19,6 +19,23 @@ const comeInHandler = () => {
       phoneNumber.value = null;
       password.value = '';
     }, 1000);
+    const tokenParts = result.token.split('.');
+    const encodedPayload = tokenParts[1];
+    const decodedPayload = atob(encodedPayload);
+    const parsedPayload = JSON.parse(decodedPayload);
+    console.log('reparsed token', parsedPayload);
+
+    const unixTimestamp = parsedPayload.iat;
+    const twentyMinutesInMilliseconds = 20 * 60;
+
+    const newExpiredTimestamp = unixTimestamp + twentyMinutesInMilliseconds;
+    const newExpiredDate = new Date(newExpiredTimestamp * 1000);
+
+    localStorage.setItem('timeUntilEnd', newExpiredDate.getTime.toString());
+    console.log(
+      'дата когда токен закончится и мы выкидываем юзера с приложения',
+      newExpiredDate,
+    );
   });
 };
 </script>
