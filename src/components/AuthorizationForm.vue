@@ -30,7 +30,7 @@ const comeInHandler = () => {
     const newExpiredTimestamp = unixTimestamp + twentyMinutesInMilliseconds;
     const newExpiredDate = new Date(newExpiredTimestamp * 1000);
 
-    localStorage.setItem('timeUntilEnd', newExpiredDate.getTime.toString());
+    localStorage.setItem('timeUntilEnd', newExpiredDate.toString());
     localStorage.setItem('token', JSON.stringify(parsedPayload));
     localStorage.setItem('user', result.name);
   });
