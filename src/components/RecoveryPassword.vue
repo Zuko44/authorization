@@ -1,38 +1,31 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { comeIn } from '../api/api';
+import { sendPhone, sendSms } from '../api/api';
+import router from '../router';
 
 const phoneNumber = ref<number>();
-const password = ref<string>();
+const password = ref<number>();
 const remember = ref<boolean>(false);
 const msg = ref<string>();
 const success = ref<boolean>();
 
-const comeInHandler = () => {
-  comeIn(phoneNumber.value, password.value, remember.value).then((result) => {
-    console.log(result);
-    console.log(result.success);
-    console.log(result.msg);
+const sendPhoneHandler = () => {
+  sendPhone(phoneNumber.value).then((result) => {
     msg.value = result.msg;
-    success.value = result.success;
-    setTimeout(() => {
-      phoneNumber.value = null;
-      password.value = '';
-    }, 1000);
-    const tokenParts = result.token.split('.');
-    const encodedPayload = tokenParts[1];
-    const decodedPayload = atob(encodedPayload);
-    const parsedPayload = JSON.parse(decodedPayload);
 
-    const unixTimestamp = parsedPayload.iat;
-    const twentyMinutesInMilliseconds = 20 * 60;
+    if (result.success === true) {
+      remember.value = true;
+    }
+  });
+};
 
-    const newExpiredTimestamp = unixTimestamp + twentyMinutesInMilliseconds;
-    const newExpiredDate = new Date(newExpiredTimestamp * 1000);
+const sendSmsHandler = () => {
+  sendSms(password.value).then((result) => {
+    msg.value = result.msg;
 
-    localStorage.setItem('timeUntilEnd', newExpiredDate.toString());
-    localStorage.setItem('token', JSON.stringify(parsedPayload));
-    localStorage.setItem('user', result.name);
+    if (result.success === true) {
+      router.push({ name: 'home' });
+    }
   });
 };
 </script>
@@ -56,11 +49,10 @@ const comeInHandler = () => {
     <div class="rightPart">
       <div class="formWrapper">
         <h1>Добро пожаловать</h1>
-        <div class="login">войти по номеру телефона</div>
         <div :class="{ error: success === false, success: success === true }">
           {{ msg }}
         </div>
-        <form action="" method="POST">
+        <form v-if="!remember" action="" method="POST">
           <fieldset>
             <legend>Номер телефона</legend>
             <input
@@ -70,8 +62,13 @@ const comeInHandler = () => {
               class="phoneNumber"
             />
           </fieldset>
+          <button type="button" class="btn" @click.prevent="sendPhoneHandler">
+            Отправить
+          </button>
+        </form>
+        <form v-if="remember" action="" method="POST">
           <fieldset>
-            <legend>Пароль</legend>
+            <legend>Пароль из смс</legend>
             <input
               v-model="password"
               name="phoneNumber"
@@ -79,25 +76,8 @@ const comeInHandler = () => {
               class="password"
             />
           </fieldset>
-          <div class="remember">
-            <div>
-              <label for="remember">Запомнить меня</label>
-              <input
-                type="checkbox"
-                class="remember"
-                v-model="remember"
-                :checked="remember"
-              />
-            </div>
-            <div>
-              <RouterLink to="/recovery">Забыли пароль?</RouterLink>
-            </div>
-            <div>
-              <RouterLink to="/registr">Регистрация</RouterLink>
-            </div>
-          </div>
-          <button type="button" class="btn" @click.prevent="comeInHandler">
-            Войти
+          <button type="button" class="btn" @click.prevent="sendSmsHandler">
+            Отправить
           </button>
         </form>
       </div>
@@ -114,6 +94,7 @@ const comeInHandler = () => {
   flex-direction: row;
   border-radius: 20px;
   font-family: 'Cabinet Grotesk Regular';
+  background: white;
 }
 
 img {
@@ -262,12 +243,12 @@ legend {
   background-color: RGB(0, 158, 226);
   border: none;
   border-radius: 7px;
+  margin-top: 15px;
 }
 
 .error {
   color: red;
 }
-
 .success {
   color: green;
 }
