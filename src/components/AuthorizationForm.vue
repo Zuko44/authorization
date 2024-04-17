@@ -1,26 +1,39 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { comeIn } from '../api/api';
 
 const phoneNumber = ref<number>();
-const password = ref<number>();
+const password = ref<string>();
 const remember = ref<boolean>(false);
+const msg = ref<string>();
+const success = ref<boolean>();
 
-const comeInHandler = async () => {
-  const data = {
-    phone: phoneNumber.value,
-    password: password.value,
-  };
+const comeInHandler = () => {
+  comeIn(phoneNumber.value, password.value, remember.value).then((result) => {
+    console.log(result);
+    console.log(result.success);
+    console.log(result.msg);
+    msg.value = result.msg;
+    success.value = result.success;
+    setTimeout(() => {
+      phoneNumber.value = null;
+      password.value = '';
+    }, 1000);
+    const tokenParts = result.token.split('.');
+    const encodedPayload = tokenParts[1];
+    const decodedPayload = atob(encodedPayload);
+    const parsedPayload = JSON.parse(decodedPayload);
 
-  const response = await fetch(
-    'https://backend-front-test.dev.echo-company.ru/api/auth/login',
-    {
-      method: 'POST',
-      body: JSON.stringify(data),
-    },
-  );
+    const unixTimestamp = parsedPayload.iat;
+    const twentyMinutesInMilliseconds = 20 * 60;
 
-  const result = await response.json();
-  console.log(result);
+    const newExpiredTimestamp = unixTimestamp + twentyMinutesInMilliseconds;
+    const newExpiredDate = new Date(newExpiredTimestamp * 1000);
+
+    localStorage.setItem('timeUntilEnd', newExpiredDate.toString());
+    localStorage.setItem('token', JSON.stringify(parsedPayload));
+    localStorage.setItem('user', result.name);
+  });
 };
 </script>
 
@@ -44,6 +57,9 @@ const comeInHandler = async () => {
       <div class="formWrapper">
         <h1>Добро пожаловать</h1>
         <div class="login">войти по номеру телефона</div>
+        <div :class="{ error: success === false, success: success === true }">
+          {{ msg }}
+        </div>
         <form action="" method="POST">
           <fieldset>
             <legend>Номер телефона</legend>
@@ -243,5 +259,13 @@ legend {
   background-color: RGB(0, 158, 226);
   border: none;
   border-radius: 7px;
+}
+
+.error {
+  color: red;
+}
+
+.success {
+  color: green;
 }
 </style>
