@@ -1,11 +1,47 @@
 <script setup lang="ts">
+import router from '../router';
 import { ref, onMounted } from 'vue';
 
-const phoneNumber = ref<number>();
-const password = ref<number>();
-const remember = ref<boolean>(false);
+const userName = ref<string>('чукча');
 
-onMounted(() => {});
+const getDateFromLocalStorage = () => {
+  const dateString = localStorage.getItem('timeUntilEnd');
+  if (dateString) {
+    return new Date(dateString);
+  }
+};
+
+const initUser = () => {
+  const localStorageValue = localStorage.getItem('user');
+  if (localStorageValue) {
+    userName.value = localStorageValue;
+  }
+};
+
+const endSession = () => {
+  localStorage.removeItem('timeUntilEnd');
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  router.push({ name: 'home' });
+};
+
+const initTimeUntilEnd = () => {
+  const start = new Date();
+  let end = getDateFromLocalStorage();
+  if (end) {
+    const diff = (start.getTime() - end.getTime()) / 1000;
+    setTimeout(() => {
+      if (new Date() === end) {
+        endSession();
+      }
+    }, diff);
+  }
+};
+
+onMounted(() => {
+  initUser();
+  initTimeUntilEnd();
+});
 </script>
 
 <template>
@@ -26,7 +62,10 @@ onMounted(() => {});
     </div>
     <div class="rightPart">
       <div class="formWrapper">
-        <h1>Добро пожаловать</h1>
+        <h1>Здравствуйте, {{ userName }}!</h1>
+        <div>
+          <button type="button" class="btn" @click="endSession">Выход</button>
+        </div>
       </div>
       <img class="plane" src="../assets/images/plane.jpg" alt="plane" />
       <img class="India" src="../assets/images/India.jpg" alt="India" />
@@ -41,6 +80,7 @@ onMounted(() => {});
   flex-direction: row;
   border-radius: 20px;
   font-family: 'Cabinet Grotesk Regular';
+  background: white;
 }
 
 img {
@@ -189,5 +229,6 @@ legend {
   background-color: RGB(0, 158, 226);
   border: none;
   border-radius: 7px;
+  cursor: pointer;
 }
 </style>
