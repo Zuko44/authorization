@@ -2,7 +2,7 @@
 import router from '../router';
 import { ref, onMounted } from 'vue';
 
-const userName = ref<string>('чукча');
+const userName = ref<string>('');
 
 const getDateFromLocalStorage = () => {
   const dateString = localStorage.getItem('timeUntilEnd');
