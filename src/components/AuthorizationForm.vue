@@ -23,7 +23,6 @@ const comeInHandler = () => {
     const encodedPayload = tokenParts[1];
     const decodedPayload = atob(encodedPayload);
     const parsedPayload = JSON.parse(decodedPayload);
-    console.log('reparsed token', parsedPayload);
 
     const unixTimestamp = parsedPayload.iat;
     const twentyMinutesInMilliseconds = 20 * 60;
@@ -33,10 +32,6 @@ const comeInHandler = () => {
 
     localStorage.setItem('timeUntilEnd', newExpiredDate.getTime.toString());
     localStorage.setItem('token', JSON.stringify(parsedPayload));
-    console.log(
-      'дата когда токен закончится и мы выкидываем юзера с приложения',
-      newExpiredDate,
-    );
   });
 };
 </script>
