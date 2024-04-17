@@ -32,6 +32,7 @@ const comeInHandler = () => {
 
     localStorage.setItem('timeUntilEnd', newExpiredDate.getTime.toString());
     localStorage.setItem('token', JSON.stringify(parsedPayload));
+    localStorage.setItem('user', result.name);
   });
 };
 </script>
