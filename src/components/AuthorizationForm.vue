@@ -32,6 +32,7 @@ const comeInHandler = () => {
     const newExpiredDate = new Date(newExpiredTimestamp * 1000);
 
     localStorage.setItem('timeUntilEnd', newExpiredDate.getTime.toString());
+    localStorage.setItem('token', JSON.stringify(parsedPayload));
     console.log(
       'дата когда токен закончится и мы выкидываем юзера с приложения',
       newExpiredDate,
