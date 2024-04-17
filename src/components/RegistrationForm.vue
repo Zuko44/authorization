@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { registrationHandler } from '../api/api';
+import { registration } from '../api/api';
 import router from '../router';
 import { ref } from 'vue';
 
@@ -16,8 +16,8 @@ const handleFileChange = (e: any) => {
   }
 };
 
-const registration = () => {
-  registrationHandler(
+const registrationHandler = () => {
+  registration(
     userName.value,
     phoneNumber.value,
     password.value,
@@ -103,9 +103,13 @@ const registration = () => {
             />
           </fieldset>
           <div class="auth">
-            <RouterLink to="/">Авторизация</RouterLink>
+            <RouterLink to="/authorization">Авторизация</RouterLink>
           </div>
-          <button type="button" class="btn" @click.prevent="registration">
+          <button
+            type="button"
+            class="btn"
+            @click.prevent="registrationHandler"
+          >
             Регистрация
           </button>
         </form>

@@ -1,4 +1,4 @@
-export const registrationHandler = async (
+export const registration = async (
   value: string,
   value2: number,
   value3: string,
