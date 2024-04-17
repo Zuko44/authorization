@@ -34,6 +34,11 @@ const router = createRouter({
       // which is lazy-loaded when the route is visited.
       component: () => import('../components/RecoveryPassword.vue'),
     },
+    {
+      path: '/cabinet',
+      name: 'cabinet',
+      component: () => import('../components/UserCabinet.vue'),
+    },
   ],
 });
 
