@@ -1,4 +1,4 @@
-export const sendPhoneHandler = async (value: number) => {
+export const sendPhone = async (value: number) => {
   const formData = new FormData();
   formData.set('phone', value.toString());
 
@@ -14,7 +14,7 @@ export const sendPhoneHandler = async (value: number) => {
   return result;
 };
 
-export const sendSmsHandler = async (value: number) => {
+export const sendSms = async (value: number) => {
   const formData = new FormData();
   formData.set('sms', value.toString());
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { sendPhoneHandler, sendSmsHandler } from '../api/api';
+import { sendPhone, sendSms } from '../api/api';
 import router from '../router';
 
 const phoneNumber = ref<number>();
@@ -9,8 +9,8 @@ const remember = ref<boolean>(false);
 const msg = ref<string>();
 const success = ref<boolean>();
 
-const sendPhone = () => {
-  sendPhoneHandler(phoneNumber.value).then((result) => {
+const sendPhoneHandler = () => {
+  sendPhone(phoneNumber.value).then((result) => {
     msg.value = result.msg;
 
     if (result.success === true) {
@@ -19,8 +19,8 @@ const sendPhone = () => {
   });
 };
 
-const sendSms = () => {
-  sendSmsHandler(password.value).then((result) => {
+const sendSmsHandler = () => {
+  sendSms(password.value).then((result) => {
     msg.value = result.msg;
 
     if (result.success === true) {
@@ -62,7 +62,7 @@ const sendSms = () => {
               class="phoneNumber"
             />
           </fieldset>
-          <button type="button" class="btn" @click.prevent="sendPhone">
+          <button type="button" class="btn" @click.prevent="sendPhoneHandler">
             Отправить
           </button>
         </form>
@@ -76,7 +76,7 @@ const sendSms = () => {
               class="password"
             />
           </fieldset>
-          <button type="button" class="btn" @click.prevent="sendSms">
+          <button type="button" class="btn" @click.prevent="sendSmsHandler">
             Отправить
           </button>
         </form>
