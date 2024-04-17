@@ -1,4 +1,4 @@
-export const comeInHandler = async (
+export const comeIn = async (
   value: number,
   value2: string,
   value3: boolean,

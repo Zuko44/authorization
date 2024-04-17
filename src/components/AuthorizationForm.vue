@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { comeInHandler } from '../api/api';
+import { comeIn } from '../api/api';
 
 const phoneNumber = ref<number>();
 const password = ref<string>();
@@ -8,20 +8,18 @@ const remember = ref<boolean>(false);
 const msg = ref<string>();
 const success = ref<boolean>();
 
-const comeIn = () => {
-  comeInHandler(phoneNumber.value, password.value, remember.value).then(
-    (result) => {
-      console.log(result);
-      console.log(result.success);
-      console.log(result.msg);
-      msg.value = result.msg;
-      success.value = result.success;
-      setTimeout(() => {
-        phoneNumber.value = null;
-        password.value = '';
-      }, 1000);
-    },
-  );
+const comeInHandler = () => {
+  comeIn(phoneNumber.value, password.value, remember.value).then((result) => {
+    console.log(result);
+    console.log(result.success);
+    console.log(result.msg);
+    msg.value = result.msg;
+    success.value = result.success;
+    setTimeout(() => {
+      phoneNumber.value = null;
+      password.value = '';
+    }, 1000);
+  });
 };
 </script>
 
@@ -81,7 +79,7 @@ const comeIn = () => {
               <a href="#">Забыли пароль?</a>
             </div>
           </div>
-          <button type="button" class="btn" @click.prevent="comeIn">
+          <button type="button" class="btn" @click.prevent="comeInHandler">
             Войти
           </button>
         </form>
