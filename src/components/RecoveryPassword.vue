@@ -5,7 +5,7 @@ import router from '../router';
 
 const phoneNumber = ref<number>();
 const password = ref<number>();
-const remember = ref<boolean>(false);
+const showForm = ref<boolean>(false);
 const msg = ref<string>();
 const success = ref<boolean>();
 
@@ -14,7 +14,7 @@ const sendPhoneHandler = () => {
     msg.value = result.msg;
 
     if (result.success === true) {
-      remember.value = true;
+      showForm.value = true;
     }
   });
 };
@@ -52,7 +52,7 @@ const sendSmsHandler = () => {
         <div :class="{ error: success === false, success: success === true }">
           {{ msg }}
         </div>
-        <form v-if="!remember" action="" method="POST">
+        <form v-if="!showForm" action="" method="POST">
           <fieldset>
             <legend>Номер телефона</legend>
             <input
@@ -66,7 +66,7 @@ const sendSmsHandler = () => {
             Отправить
           </button>
         </form>
-        <form v-if="remember" action="" method="POST">
+        <form v-if="showForm" action="" method="POST">
           <fieldset>
             <legend>Пароль из смс</legend>
             <input
